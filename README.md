@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Awesome Project Build with TypeORM
 
 Steps to run this project:
@@ -5,3 +6,6 @@ Steps to run this project:
 1. Run `npm i` command
 2. Setup database settings inside `data-source.ts` file
 3. Run `npm start` command
+=======
+# Biblioteca
+>>>>>>> 8dc7f0a223cf85dd0750959216eaee3bb8b89c51
