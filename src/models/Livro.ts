@@ -16,8 +16,6 @@ export class Livro {
   @Column() 
   genero: string;
 
-  @Column()
-  autor: string;
 
 
   @ManyToMany(() => Autor, autor => autor.livros)
