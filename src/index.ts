@@ -1,6 +1,6 @@
 // src/index.ts
-import { AppDataSource } from "./service/data-source";
-import app from "./service/app";
+import { AppDataSource } from "./data-source";
+import app from "./app";
 
 AppDataSource.initialize()
   .then(() => {

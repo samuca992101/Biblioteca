@@ -1,7 +1,7 @@
 import express from "express";
 import "reflect-metadata";
-import livroRoutes from "../routes/LivroRouter";
-import autorRoutes from "../routes/AutorRouter";
+import livroRoutes from "./routes/LivroRouter";
+import autorRoutes from "./routes/AutorRouter";
 
 const app = express();
 

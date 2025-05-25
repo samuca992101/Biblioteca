@@ -1,7 +1,7 @@
 import "reflect-metadata"
 import { DataSource } from "typeorm"
-import { Livro } from "../models/Livro"
-import { Autor } from "../models/Autor"
+import { Livro } from "./models/Livro"
+import { Autor } from "./models/Autor"
 
 export const AppDataSource = new DataSource({
     type: "postgres",
