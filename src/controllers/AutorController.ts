@@ -23,7 +23,7 @@ export class AutorController {
     const { id } = req.params;
     const { nome } = req.body;
 
-    const autor = await this.autorRepository.findOneBy({ id: parseInt(id) });
+    const autor = await this.autorRepository.findOne({ where: { id: parseInt(id) } });
 
     if (!autor) {
       return res.status(404).json({ mensagem: "Autor não encontrado" });
@@ -38,7 +38,7 @@ export class AutorController {
   remover = async (req: Request, res: Response) => {
     const { id } = req.params;
 
-    const autor = await this.autorRepository.findOneBy({ id: parseInt(id) });
+    const autor = await this.autorRepository.findOne({ where: { id: parseInt(id) } });
 
     if (!autor) {
       return res.status(404).json({ mensagem: "Autor não encontrado" });
@@ -52,7 +52,10 @@ export class AutorController {
   buscarPorId = async (req: Request, res: Response) => {
     const { id } = req.params;
 
-    const autor = await this.autorRepository.findOneBy({ id: parseInt(id) });
+    const autor = await this.autorRepository.findOne({
+      where: { id: parseInt(id) },
+      relations: ["livros"]
+    });
 
     if (!autor) {
       return res.status(404).json({ mensagem: "Autor não encontrado" });

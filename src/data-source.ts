@@ -2,6 +2,7 @@ import "reflect-metadata"
 import { DataSource } from "typeorm"
 import { Livro } from "./models/Livro"
 import { Autor } from "./models/Autor"
+import { Editora } from "./models/Editora"
 
 export const AppDataSource = new DataSource({
     type: "postgres",
@@ -12,7 +13,7 @@ export const AppDataSource = new DataSource({
     database: "biblioteca",
     synchronize: true,
     logging: false,
-    entities: [Livro, Autor],
+    entities: [Livro, Autor, Editora],
     migrations: [],
     subscribers: [],
 })
