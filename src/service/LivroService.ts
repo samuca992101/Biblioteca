@@ -1,34 +1,98 @@
+// src/services/LivroService.ts
 import { livroRepository } from "../repositories/LivroRepository";
 import { autorRepository } from "../repositories/AutorRepository";
+import { editoraRepository } from "../repositories/EditoraRepository";
+import { In } from "typeorm";
 import { Livro } from "../models/Livro";
-import { Autor } from "../models/Autor";
-
-interface CriarLivroComAutoresDTO {
-  titulo: string;
-  anoPublicacao: number;
-  genero: string;
-  nomesAutores: string[]; // agora é uma lista de nomes
-}
 
 export class LivroService {
-  static async criarLivroComAutores(dados: CriarLivroComAutoresDTO): Promise<Livro> {
-    const autores: Autor[] = [];
+  static async listar(): Promise<Livro[]> {
+    return await livroRepository.find({ relations: ["autores", "editora"] });
+  }
 
-    // Para cada nome, criamos um autor e salvamos
-    for (const nome of dados.nomesAutores) {
-      const autor = autorRepository.create({ nome });
-      await autorRepository.save(autor);
-      autores.push(autor);
+  static async buscarPorId(id: number): Promise<Livro | null> {
+    return await livroRepository.findOne({
+      where: { id },
+      relations: ["autores", "editora"]
+    });
+  }
+
+  static async criar(data: {
+    titulo: string;
+    anoPublicacao: number;
+    genero: string;
+    autorIds: number[];
+    editoraId: number;
+  }): Promise<Livro> {
+    const { titulo, anoPublicacao, genero, autorIds, editoraId } = data;
+
+    if (!Array.isArray(autorIds) || autorIds.length === 0) {
+      throw new Error("É necessário informar pelo menos um autor");
     }
 
-    // Criamos e salvamos o livro com os autores associados
+    const autores = await autorRepository.findBy({ id: In(autorIds) });
+    if (autores.length !== autorIds.length) {
+      throw new Error("Um ou mais autores não foram encontrados");
+    }
+
+    const editora = await editoraRepository.findOneBy({ id: editoraId });
+    if (!editora) {
+      throw new Error("Editora não encontrada");
+    }
+
     const livro = livroRepository.create({
-      titulo: dados.titulo,
-      anoPublicacao: dados.anoPublicacao,
-      genero: dados.genero,
+      titulo,
+      anoPublicacao,
+      genero,
       autores,
+      editora
     });
 
     return await livroRepository.save(livro);
+  }
+
+  static async atualizar(id: number, data: {
+    titulo: string;
+    anoPublicacao: number;
+    genero: string;
+    autorIds: number[];
+    editoraId: number;
+  }): Promise<Livro> {
+    const livro = await livroRepository.findOne({
+      where: { id },
+      relations: ["autores", "editora"]
+    });
+
+    if (!livro) {
+      throw new Error("Livro não encontrado");
+    }
+
+    const { titulo, anoPublicacao, genero, autorIds, editoraId } = data;
+
+    const autores = await autorRepository.findBy({ id: In(autorIds) });
+    if (autores.length !== autorIds.length) {
+      throw new Error("Um ou mais autores não foram encontrados");
+    }
+
+    const editora = await editoraRepository.findOneBy({ id: editoraId });
+    if (!editora) {
+      throw new Error("Editora não encontrada");
+    }
+
+    livro.titulo = titulo;
+    livro.genero = genero;
+    livro.anoPublicacao = anoPublicacao;
+    livro.autores = autores;
+    livro.editora = editora;
+
+    return await livroRepository.save(livro);
+  }
+
+  static async deletar(id: number): Promise<void> {
+    const livro = await livroRepository.findOneBy({ id });
+    if (!livro) {
+      throw new Error("Livro não encontrado");
+    }
+    await livroRepository.remove(livro);
   }
 }

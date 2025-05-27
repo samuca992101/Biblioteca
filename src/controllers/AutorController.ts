@@ -1,66 +1,58 @@
 import { Request, Response } from "express";
-import { AppDataSource } from "../data-source";
-import { Autor } from "../models/Autor";
+import { AutorService } from "../service/AutorService";
 
 export class AutorController {
-  private autorRepository = AppDataSource.getRepository(Autor);
-
   listarTodos = async (req: Request, res: Response) => {
-    const autores = await this.autorRepository.find({ relations: ["livros"] });
-    return res.json(autores);
+    try {
+      const autores = await AutorService.listarTodos();
+      return res.json(autores);
+    } catch (error) {
+      return res.status(500).json({ mensagem: "Erro ao listar autores." });
+    }
   };
 
   criar = async (req: Request, res: Response) => {
     const { nome } = req.body;
 
-    const autor = this.autorRepository.create({ nome });
-    await this.autorRepository.save(autor);
+    try {
+      const autor = await AutorService.criar(nome);
+      return res.status(201).json(autor);
+    } catch (error: any) {
+      return res.status(error.status || 500).json({ mensagem: error.message });
+    }
+  };
 
-    return res.status(201).json(autor);
+  buscarPorId = async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    try {
+      const autor = await AutorService.buscarPorId(Number(id));
+      return res.json(autor);
+    } catch (error: any) {
+      return res.status(error.status || 500).json({ mensagem: error.message });
+    }
   };
 
   atualizar = async (req: Request, res: Response) => {
     const { id } = req.params;
     const { nome } = req.body;
 
-    const autor = await this.autorRepository.findOne({ where: { id: parseInt(id) } });
-
-    if (!autor) {
-      return res.status(404).json({ mensagem: "Autor não encontrado" });
+    try {
+      const autorAtualizado = await AutorService.atualizar(Number(id), nome);
+      return res.json(autorAtualizado);
+    } catch (error: any) {
+      return res.status(error.status || 500).json({ mensagem: error.message });
     }
-
-    autor.nome = nome;
-    await this.autorRepository.save(autor);
-
-    return res.json(autor);
   };
 
   remover = async (req: Request, res: Response) => {
     const { id } = req.params;
 
-    const autor = await this.autorRepository.findOne({ where: { id: parseInt(id) } });
-
-    if (!autor) {
-      return res.status(404).json({ mensagem: "Autor não encontrado" });
+    try {
+      await AutorService.remover(Number(id));
+      return res.status(204).send();
+    } catch (error: any) {
+      return res.status(error.status || 500).json({ mensagem: error.message });
     }
-
-    await this.autorRepository.remove(autor);
-
-    return res.status(204).send(); // No Content
-  };
-
-  buscarPorId = async (req: Request, res: Response) => {
-    const { id } = req.params;
-
-    const autor = await this.autorRepository.findOne({
-      where: { id: parseInt(id) },
-      relations: ["livros"]
-    });
-
-    if (!autor) {
-      return res.status(404).json({ mensagem: "Autor não encontrado" });
-    }
-
-    return res.json(autor);
   };
 }

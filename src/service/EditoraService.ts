@@ -1,23 +1,41 @@
-import { livroRepository } from "../repositories/LivroRepository";
-import { Livro } from "../models/Livro";
-
-interface CriarEditora {
-    nome: string;
-    nomesLivros: string[];
-}
+import { editoraRepository } from "../repositories/EditoraRepository";
+import { Editora } from "../models/Editora";
 
 export class EditoraService {
-    static async criarEditoraComLivros(dados: CriarEditora): Promise<Livro[]> {
-        const livros: Livro[] = [];
+  static async listar(): Promise<Editora[]> {
+    return await editoraRepository.find({ relations: ["livros"] });
+  }
 
-        // Para cada nome, criamos um livro e salvamos
-        for (const nome of dados.nomesLivros) {
-            const livro = livroRepository.create({ titulo: nome });
-            await livroRepository.save(livro);
-            livros.push(livro);
-        }
+  static async criar(nome: string): Promise<Editora> {
+    const editora = editoraRepository.create({ nome });
+    return await editoraRepository.save(editora);
+  }
 
-        // Retornamos os livros criados
-        return livros;
+  static async buscarPorId(id: number): Promise<Editora | null> {
+    return await editoraRepository.findOne({
+      where: { id },
+      relations: ["livros"]
+    });
+  }
+
+  static async atualizar(id: number, nome: string): Promise<Editora> {
+    const editora = await editoraRepository.findOneBy({ id });
+
+    if (!editora) {
+      throw new Error("Editora não encontrada");
     }
+
+    editora.nome = nome;
+    return await editoraRepository.save(editora);
+  }
+
+  static async deletar(id: number): Promise<void> {
+    const editora = await editoraRepository.findOneBy({ id });
+
+    if (!editora) {
+      throw new Error("Editora não encontrada");
+    }
+
+    await editoraRepository.remove(editora);
+  }
 }
