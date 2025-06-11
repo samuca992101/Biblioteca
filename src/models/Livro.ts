@@ -16,6 +16,9 @@ export class Livro {
 
   @Column() 
   genero: string;
+  
+  @Column({ nullable: true })
+  capaUrl: string;
 
 
 

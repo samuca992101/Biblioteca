@@ -43,4 +43,24 @@ export class LivroController {
     await LivroService.deletar(id);
     res.status(204).send();
   };
-}
+    public async uploadCapa(req: Request, res: Response) {
+    const livroId = parseInt(req.params.id);
+    const file = req.file;
+
+    if (!file) {
+      return res.status(400).json({ erro: "Nenhuma imagem enviada" });
+    }
+
+    try {
+      const livroAtualizado = await LivroService.salvarCapa(livroId, file.filename);
+
+      if (!livroAtualizado) {
+        return res.status(404).json({ erro: "Livro não encontrado" });
+      }
+
+      return res.status(200).json({ mensagem: "Capa atualizada", livro: livroAtualizado });
+    } catch (error) {
+      return res.status(500).json({ erro: "Erro ao salvar a capa", detalhe: error });
+    }
+
+}};

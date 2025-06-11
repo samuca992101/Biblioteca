@@ -95,4 +95,12 @@ export class LivroService {
     }
     await livroRepository.remove(livro);
   }
+   static async salvarCapa(livroId: number, filename: string): Promise<Livro | null> {
+    const livro = await livroRepository.findOneBy({ id: livroId });
+
+    if (!livro) return null;
+
+    livro.capaUrl = `/uploads/${filename}`;
+    return await livroRepository.save(livro);
+  }
 }

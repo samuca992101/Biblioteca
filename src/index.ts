@@ -12,3 +12,4 @@ AppDataSource.initialize()
   .catch((err) => {
     console.error("Erro ao iniciar o servidor:", err);
   });
+ 
