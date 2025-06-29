@@ -3,14 +3,22 @@ import "reflect-metadata";
 import livroRoutes from "./routes/LivroRouter";
 import autorRoutes from "./routes/AutorRouter";
 import editoraRouter from "./routes/EditoraRouter";
+import emprestimoRoutes from "./routes/EmprestimoRouter";
+import usuarioRoutes from "./routes/UsuarioRouter";
 import path from "path";
+
 const app = express();
 
-app.use(express.json()); // Permite o uso de JSON no corpo das requisições
+app.use(express.json());
 
-// Rotas
+// Rotas de API
 app.use("/livros", livroRoutes);
 app.use("/autores", autorRoutes);
 app.use("/editoras", editoraRouter);
-app.use("/uploads", express.static(path.resolve(__dirname, "..", "uploads")));
+app.use("/emprestimos", emprestimoRoutes);
+app.use("/usuarios", usuarioRoutes);
+
+// Arquivos estáticos de upload
+app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
+
 export default app;

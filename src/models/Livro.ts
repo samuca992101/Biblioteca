@@ -1,8 +1,8 @@
 // src/entity/Livro.ts
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, ManyToOne, OneToMany } from 'typeorm';
 import { Autor } from './Autor';
 import { Editora } from './Editora';
-
+import { Emprestimo } from './Emprestimo';
 @Entity()
 export class Livro {
   @PrimaryGeneratedColumn()
@@ -28,4 +28,7 @@ export class Livro {
 
   @ManyToOne(() => Editora, editora => editora.livros)
   editora: Editora;
+
+  @OneToMany(() => Emprestimo, emprestimo => emprestimo.livro)
+  emprestimos: Emprestimo[];
 }
