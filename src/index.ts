@@ -5,8 +5,8 @@ import app from "./app";
 AppDataSource.initialize()
   .then(() => {
     console.log("Conectado ao banco de dados!");
-    app.listen(3000, () => {
-      console.log("Servidor rodando na porta 3000 🚀");
+    app.listen(4000, () => {
+      console.log("Servidor rodando na porta 4000");
     });
   })
   .catch((err) => {

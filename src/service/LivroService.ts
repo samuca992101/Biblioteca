@@ -4,6 +4,14 @@ import { autorRepository } from "../repositories/AutorRepository";
 import { editoraRepository } from "../repositories/EditoraRepository";
 import { In } from "typeorm";
 import { Livro } from "../models/Livro";
+import axios from "axios";
+
+const API_URL = 'http://localhost:3000';
+
+export const buscarLivros = async () => {
+  const resposta = await axios.get(`${API_URL}/livros`);
+  return resposta.data;
+};
 
 export class LivroService {
   static async listar(): Promise<Livro[]> {

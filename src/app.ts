@@ -6,11 +6,11 @@ import editoraRouter from "./routes/EditoraRouter";
 import emprestimoRoutes from "./routes/EmprestimoRouter";
 import usuarioRoutes from "./routes/UsuarioRouter";
 import path from "path";
-
+import cors from 'cors';
 const app = express();
 
 app.use(express.json());
-
+app.use(cors({ origin: 'http://localhost:3000' }));
 // Rotas de API
 app.use("/livros", livroRoutes);
 app.use("/autores", autorRoutes);
